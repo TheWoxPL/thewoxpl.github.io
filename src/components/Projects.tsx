@@ -210,26 +210,28 @@ const Projects: React.FC = () => {
               key={index}
               className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
             >
-              <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden group">
                 <img
                   src={project.image}
                   alt={project.title}
                   className="w-full h-48 object-cover transition-transform duration-300 hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
                   <div className="p-4 w-full">
                     <div className="flex gap-2">
                       <a
                         href={project.liveUrl}
-                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                        className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow"
+                        title="Live Demo"
                       >
-                        <ExternalLink size={16} className="text-white" />
+                        <ExternalLink size={18} className="text-gray-900" />
                       </a>
                       <a
                         href={project.githubUrl}
-                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                        className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow"
+                        title="GitHub Repo"
                       >
-                        <Github size={16} className="text-white" />
+                        <Github size={18} className="text-gray-900" />
                       </a>
                     </div>
                   </div>

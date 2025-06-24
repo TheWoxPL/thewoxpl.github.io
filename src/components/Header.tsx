@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Menu, X, Github, Linkedin, Mail } from "lucide-react";
 
 interface MenuItemType {
@@ -76,9 +77,63 @@ const Header: React.FC = () => {
     { href: "#contact", label: "Contact" },
   ];
 
+  // Render overlay and menu in a portal for proper stacking
+  const mobileMenuPortal = isMenuOpen
+    ? createPortal(
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300 md:hidden"
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="Close menu overlay"
+          />
+          {/* Mobile Menu */}
+          <div className="fixed top-0 left-0 right-0 z-50 mt-[60px] mx-3 fade-in-menu md:hidden">
+            <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
+              {menuItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => smoothScrollTo(item.href, e)}
+                  className={`block px-4 py-3 text-sm font-medium transition-all duration-300 border-b border-gray-100 last:border-b-0 ${
+                    activeSection === item.href.replace("#", "")
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              ))}
+              <div className="flex items-center justify-center space-x-6 px-4 py-3 bg-gray-50">
+                <a
+                  href="https://github.com/thewoxpl"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <Github size={18} />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/wojciech-bubula"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <Linkedin size={18} />
+                </a>
+                <a
+                  href="mailto:wojciech.bubula@outlook.com"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <Mail size={18} />
+                </a>
+              </div>
+            </div>
+          </div>
+        </>,
+        document.body
+      )
+    : null;
+
   return (
     <header className="fixed top-0 w-full z-50 bg-gray-900 space-header backdrop-blur-sm shadow-lg">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-6 relative z-10">
+      <nav className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 relative z-10">
         <div className="flex justify-between items-center py-2">
           {/* Logo */}
           <div className="flex-shrink-0">
@@ -147,48 +202,9 @@ const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 mt-1 mx-3">
-            <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200 animate">
-              {menuItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => smoothScrollTo(item.href, e)}
-                  className={`block px-4 py-3 text-sm font-medium transition-all duration-300 border-b border-gray-100 last:border-b-0 ${
-                    activeSection === item.href.replace("#", "")
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                  }`}
-                >
-                  {item.label}
-                </a>
-              ))}
-              <div className="flex items-center justify-center space-x-6 px-4 py-3 bg-gray-50">
-                <a
-                  href="https://github.com/thewoxpl"
-                  className="text-gray-700 hover:text-blue-600 transition-colors"
-                >
-                  <Github size={18} />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/wojciech-bubula"
-                  className="text-gray-700 hover:text-blue-600 transition-colors"
-                >
-                  <Linkedin size={18} />
-                </a>
-                <a
-                  href="mailto:wojciech.bubula@outlook.com"
-                  className="text-gray-700 hover:text-blue-600 transition-colors"
-                >
-                  <Mail size={18} />
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Mobile Menu Overlay */}
       </nav>
+      {mobileMenuPortal}
     </header>
   );
 };
