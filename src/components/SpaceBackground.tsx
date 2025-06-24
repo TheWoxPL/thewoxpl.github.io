@@ -1,5 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 
+// Add a helper to generate random colors
+const getRandomColor = () => {
+  const colors = [
+    "#f472b6", // pink
+    "#facc15", // yellow
+    "#34d399", // green
+    "#60a5fa", // blue
+    "#a78bfa", // purple
+    "#f87171", // red
+    "#38bdf8", // sky
+    "#fbbf24", // orange
+    "#c084fc", // violet
+    "#4ade80", // emerald
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
+
 interface ParticleType {
   x: number;
   y: number;
@@ -22,6 +39,7 @@ interface ExplosionParticle {
   size: number;
   opacity: number;
   decay: number;
+  color: string;
 }
 
 interface ClickEffectType {
@@ -41,7 +59,8 @@ const SpaceBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const [particles, setParticles] = useState<ParticleType[]>([]);
-  const [clickEffects, setClickEffects] = useState<ClickEffectType[]>([]);
+  const clickEffectsRef = useRef<ClickEffectType[]>([]);
+  const [_, setRerender] = useState(0); // force rerender on click
   const mousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // Particle class
@@ -85,7 +104,7 @@ const SpaceBackground: React.FC = () => {
       }
     }
 
-    draw(ctx) {
+    draw(ctx: CanvasRenderingContext2D) {
       ctx.save();
       ctx.globalAlpha = this.opacity;
       ctx.fillStyle = "#ffffff";
@@ -117,16 +136,17 @@ const SpaceBackground: React.FC = () => {
       this.decay = 0.02;
       this.particles = [];
 
-      // Create small particles for the explosion effect
-      for (let i = 0; i < 8; i++) {
+      // Create colorful sparkles for the explosion effect
+      for (let i = 0; i < 18; i++) {
         this.particles.push({
           x: x,
           y: y,
-          vx: (Math.random() - 0.5) * 8,
-          vy: (Math.random() - 0.5) * 8,
-          size: Math.random() * 3 + 1,
+          vx: Math.cos((i / 18) * 2 * Math.PI) * (Math.random() * 6 + 2),
+          vy: Math.sin((i / 18) * 2 * Math.PI) * (Math.random() * 6 + 2),
+          size: Math.random() * 2 + 1.5,
           opacity: 1,
-          decay: 0.03,
+          decay: 0.025 + Math.random() * 0.02,
+          color: getRandomColor(),
         });
       }
     }
@@ -170,11 +190,13 @@ const SpaceBackground: React.FC = () => {
         ctx.restore();
       }
 
-      // Draw explosion particles
+      // Draw explosion particles (colorful sparkles)
       this.particles.forEach((particle) => {
         ctx.save();
         ctx.globalAlpha = particle.opacity;
-        ctx.fillStyle = "#93c5fd";
+        ctx.fillStyle = particle.color;
+        ctx.shadowColor = particle.color;
+        ctx.shadowBlur = 12;
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fill();
@@ -240,14 +262,11 @@ const SpaceBackground: React.FC = () => {
         particle.draw(ctx);
       });
 
-      // Update and draw click effects
-      setClickEffects((effects) => {
-        const updatedEffects = effects.filter((effect) => {
-          effect.update();
-          effect.draw(ctx);
-          return effect.opacity > 0 || effect.particles.length > 0;
-        });
-        return updatedEffects;
+      // Update and draw click effects from ref
+      clickEffectsRef.current = clickEffectsRef.current.filter((effect) => {
+        effect.update();
+        effect.draw(ctx);
+        return effect.opacity > 0 || effect.particles.length > 0;
       });
 
       animationRef.current = requestAnimationFrame(animate);
@@ -264,7 +283,7 @@ const SpaceBackground: React.FC = () => {
 
   // Handle mouse movement for subtle particle attraction
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
     };
 
@@ -280,7 +299,8 @@ const SpaceBackground: React.FC = () => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    setClickEffects((effects) => [...effects, new ClickEffect(x, y)]);
+    clickEffectsRef.current.push(new ClickEffect(x, y));
+    setRerender((v) => v + 1); // force rerender to update canvas
   };
 
   return (
