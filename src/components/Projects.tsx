@@ -96,31 +96,34 @@ const Projects: React.FC = () => {
         </div>
 
         {/* Featured Project */}
-        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 mb-16 shadow-xl">
+        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 md:p-8 mb-16 shadow-xl">
           <div className="flex items-center gap-2 mb-6">
-            <Star className="w-6 h-6 text-yellow-500 fill-current" />
-            <span className="text-lg font-semibold text-gray-700">
+            <Star className="w-5 h-5 md:w-6 md:h-6 text-yellow-500 fill-current" />
+            <span className="text-base md:text-lg font-semibold text-gray-700">
               Featured Project
             </span>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-4">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
+            <div className="order-2 lg:order-1">
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
                 {featuredProject.title}
               </h3>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+              <p className="text-base md:text-lg text-gray-600 mb-6 leading-relaxed">
                 {featuredProject.description}
               </p>
 
               <div className="mb-6">
-                <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                <h4 className="text-lg md:text-xl font-semibold text-gray-900 mb-3">
                   Key Features:
                 </h4>
                 <ul className="space-y-2">
                   {featuredProject.highlights.map((highlight, index) => (
-                    <li key={index} className="flex items-center text-gray-600">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                    <li
+                      key={index}
+                      className="flex items-start text-gray-600 text-sm md:text-base"
+                    >
+                      <div className="w-2 h-2 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
                       {highlight}
                     </li>
                   ))}
@@ -131,49 +134,50 @@ const Projects: React.FC = () => {
                 {featuredProject.technologies.map((tech, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-white text-gray-700 rounded-full text-sm font-medium shadow-sm"
+                    className="px-2 md:px-3 py-1 bg-white text-gray-700 rounded-full text-xs md:text-sm font-medium shadow-sm"
                   >
                     {tech}
                   </span>
                 ))}
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <a
                   href={featuredProject.liveUrl}
-                  className="btn-primary inline-flex items-center gap-2"
+                  className="btn-primary inline-flex items-center justify-center gap-2 text-sm md:text-base"
                 >
-                  <ExternalLink size={20} />
+                  <ExternalLink size={18} />
                   Live Demo
                 </a>
                 <a
                   href={featuredProject.githubUrl}
-                  className="btn-secondary inline-flex items-center gap-2"
+                  className="btn-secondary inline-flex items-center justify-center gap-2 text-sm md:text-base"
                 >
-                  <Github size={20} />
+                  <Github size={18} />
                   View Code
                 </a>
               </div>
-            </div>{" "}
-            <div className="relative flex justify-center">
-              {/* Smartphone Mockup - Extra Large for Better Visibility */}
+            </div>
+
+            <div className="relative flex justify-center order-1 lg:order-2">
+              {/* Smartphone Mockup - Responsive Size */}
               <div className="relative">
                 {/* Phone Frame */}
-                <div className="relative w-[400px] h-[780px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
+                <div className="relative w-[280px] sm:w-[320px] md:w-[360px] lg:w-[400px] h-[560px] sm:h-[640px] md:h-[720px] lg:h-[780px] bg-gray-900 rounded-[2rem] md:rounded-[3rem] p-1.5 md:p-2 shadow-2xl">
                   {/* Screen */}
-                  <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
+                  <div className="w-full h-full bg-white rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden relative">
                     {/* Status Bar */}
-                    <div className="absolute top-0 left-0 right-0 h-12 bg-gray-900 flex items-center justify-between px-8 text-white text-sm z-20">
+                    <div className="absolute top-0 left-0 right-0 h-8 md:h-12 bg-gray-900 flex items-center justify-between px-4 md:px-8 text-white text-xs md:text-sm z-20">
                       <span>9:41</span>
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-3 border border-white rounded-sm">
-                          <div className="w-5/6 h-full bg-white rounded-sm"></div>
+                        <div className="w-4 md:w-6 h-2 md:h-3 border border-white rounded-sm">
+                          <div className="w-4/5 h-full bg-white rounded-sm"></div>
                         </div>
                       </div>
                     </div>
 
-                    {/* App Content - Much Larger Area */}
-                    <div className="absolute top-12 left-0 right-0 bottom-6 w-full bg-gray-50 flex items-center justify-center">
+                    {/* App Content - Responsive Area */}
+                    <div className="absolute top-8 md:top-12 left-0 right-0 bottom-4 md:bottom-6 w-full bg-gray-50 flex items-center justify-center">
                       <iframe
                         src={`${featuredProject.liveUrl}?embedded=true`}
                         className="w-full h-full border-0 bg-white phone-iframe-centered"
@@ -183,17 +187,17 @@ const Projects: React.FC = () => {
                     </div>
 
                     {/* Home Indicator */}
-                    <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-36 h-1.5 bg-gray-900 rounded-full z-20"></div>
+                    <div className="absolute bottom-1 md:bottom-2 left-1/2 transform -translate-x-1/2 w-24 md:w-36 h-1 md:h-1.5 bg-gray-900 rounded-full z-20"></div>
                   </div>
 
                   {/* Notch */}
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-40 h-8 bg-gray-900 rounded-b-3xl z-30"></div>
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-28 md:w-40 h-6 md:h-8 bg-gray-900 rounded-b-2xl md:rounded-b-3xl z-30"></div>
                 </div>
 
-                {/* Floating Elements */}
-                <div className="absolute -top-4 -left-4 w-8 h-8 bg-blue-500 rounded-full animate-bounce-slow opacity-60"></div>
-                <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-purple-500 rounded-full animate-bounce-slow opacity-60 animation-delay-1s"></div>
-                <div className="absolute top-1/2 -right-8 w-4 h-4 bg-green-500 rounded-full animate-bounce-slow opacity-60 animation-delay-2s"></div>
+                {/* Floating Elements - Hidden on small screens */}
+                <div className="hidden sm:block absolute -top-2 md:-top-4 -left-2 md:-left-4 w-6 md:w-8 h-6 md:h-8 bg-blue-500 rounded-full animate-bounce-slow opacity-60"></div>
+                <div className="hidden sm:block absolute -bottom-2 md:-bottom-4 -right-2 md:-right-4 w-4 md:w-6 h-4 md:h-6 bg-purple-500 rounded-full animate-bounce-slow opacity-60 animation-delay-1s"></div>
+                <div className="hidden md:block absolute top-1/2 -right-6 md:-right-8 w-3 md:w-4 h-3 md:h-4 bg-green-500 rounded-full animate-bounce-slow opacity-60 animation-delay-2s"></div>
               </div>
             </div>
           </div>

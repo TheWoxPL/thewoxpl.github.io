@@ -33,7 +33,7 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center pt-12 overflow-hidden"
     >
       {/* Space Background */}
       <SpaceBackground />

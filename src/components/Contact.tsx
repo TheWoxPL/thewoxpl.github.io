@@ -1,33 +1,71 @@
 import React, { useState } from "react";
-import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
+import {
+  sendEmail,
+  sendAutoReply,
+  type ContactFormData,
+} from "../utils/emailService";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     subject: "",
     message: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user starts typing
+    if (error) {
+      setError(null);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
-    console.log("Form submitted:", formData);
-    setIsSubmitted(true);
+    setIsLoading(true);
+    setError(null);
 
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: "", email: "", subject: "", message: "" });
-    }, 3000);
+    try {
+      // Send the main email
+      const result = await sendEmail(formData);
+
+      if (result.success) {
+        // Send auto-reply (optional, won't fail if not configured)
+        await sendAutoReply(formData);
+
+        setIsSubmitted(true);
+
+        // Reset form data but keep success message visible
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setError(
+          result.error || "Failed to send message. Please try again later."
+        );
+      }
+    } catch (err) {
+      console.error("Error sending email:", err);
+      setError("An unexpected error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const contactInfo = [
@@ -122,6 +160,12 @@ const Contact = () => {
           <div className="bg-white rounded-xl shadow-lg p-8">
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3">
+                    <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                    <p className="text-red-700">{error}</p>
+                  </div>
+                )}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label
@@ -193,7 +237,7 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
-                    rows="6"
+                    rows={6}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                     placeholder="Tell me about your project..."
                   ></textarea>
@@ -201,22 +245,44 @@ const Contact = () => {
 
                 <button
                   type="submit"
-                  className="w-full btn-primary inline-flex items-center justify-center gap-2"
+                  disabled={isLoading}
+                  className="w-full btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Send size={20} />
-                  Send Message
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={20} />
+                      Send Message
+                    </>
+                  )}
                 </button>
               </form>
             ) : (
-              <div className="text-center py-8">
-                <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Message Sent!
-                </h3>
-                <p className="text-gray-600">
-                  Thank you for reaching out. I'll get back to you as soon as
-                  possible.
-                </p>
+              <div className="flex items-center justify-center min-h-[400px]">
+                <div className="text-center py-8">
+                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Message Sent Successfully!
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    Thank you for reaching out. I'll get back to you as soon as
+                    possible.
+                  </p>
+                  <p className="text-sm text-gray-500 mb-6">
+                    You should also receive a confirmation email shortly.
+                  </p>
+                  <button
+                    onClick={() => setIsSubmitted(false)}
+                    className="btn-primary inline-flex items-center justify-center gap-2"
+                  >
+                    <Send size={20} />
+                    Send Another Message
+                  </button>
+                </div>
               </div>
             )}
           </div>

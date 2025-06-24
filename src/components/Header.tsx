@@ -43,7 +43,7 @@ const Header: React.FC = () => {
 
     const targetElement = document.getElementById(targetId.replace("#", ""));
     if (targetElement) {
-      const headerHeight = 80; // Account for fixed header
+      const headerHeight = 60; // Account for smaller fixed header
       const targetPosition = targetElement.offsetTop - headerHeight;
 
       // Add a subtle animation to the target element
@@ -78,11 +78,11 @@ const Header: React.FC = () => {
 
   return (
     <header className="fixed top-0 w-full z-50 bg-gray-900 space-header backdrop-blur-sm shadow-lg">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex justify-between items-center py-4">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-6 relative z-10">
+        <div className="flex justify-between items-center py-2">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#" className="text-2xl font-bold gradient-text">
+            <a href="#" className="text-xl md:text-2xl font-bold gradient-text">
               Portfolio
             </a>
           </div>
@@ -140,23 +140,23 @@ const Header: React.FC = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white hover:text-blue-400 focus:outline-none transition-colors"
+              className="text-white hover:text-blue-400 focus:outline-none transition-colors p-1"
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white shadow-lg rounded-lg mt-2">
+          <div className="md:hidden absolute top-full left-0 right-0 mt-1 mx-3">
+            <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200 animate">
               {menuItems.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
                   onClick={(e) => smoothScrollTo(item.href, e)}
-                  className={`block px-3 py-2 text-base font-medium transition-all duration-300 rounded-md ${
+                  className={`block px-4 py-3 text-sm font-medium transition-all duration-300 border-b border-gray-100 last:border-b-0 ${
                     activeSection === item.href.replace("#", "")
                       ? "text-blue-600 bg-blue-50"
                       : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
@@ -165,24 +165,24 @@ const Header: React.FC = () => {
                   {item.label}
                 </a>
               ))}
-              <div className="flex items-center space-x-4 px-3 py-2">
+              <div className="flex items-center justify-center space-x-6 px-4 py-3 bg-gray-50">
                 <a
                   href="https://github.com/thewoxpl"
                   className="text-gray-700 hover:text-blue-600 transition-colors"
                 >
-                  <Github size={20} />
+                  <Github size={18} />
                 </a>
                 <a
                   href="https://www.linkedin.com/in/wojciech-bubula"
                   className="text-gray-700 hover:text-blue-600 transition-colors"
                 >
-                  <Linkedin size={20} />
+                  <Linkedin size={18} />
                 </a>
                 <a
                   href="mailto:wojciech.bubula@outlook.com"
                   className="text-gray-700 hover:text-blue-600 transition-colors"
                 >
-                  <Mail size={20} />
+                  <Mail size={18} />
                 </a>
               </div>
             </div>

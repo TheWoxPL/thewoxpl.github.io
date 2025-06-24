@@ -2,8 +2,12 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-body {
+body, html {
   font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+  width: 100vw;
+  margin: 0px;
+
 }
 
 /* Custom scrollbar */
@@ -35,7 +39,7 @@ body {
   }
 
   .section-padding {
-    @apply py-20 px-4 sm:px-6 lg:px-8;
+    @apply py-12 px-4 sm:px-6 lg:px-8;
   }
 
   .gradient-text {
@@ -222,6 +226,49 @@ body {
     }
   }
 
+  /* Mobile-optimized buttons */
+  @media (max-width: 768px) {
+    .btn-primary,
+    .btn-secondary {
+      @apply py-2.5 px-4 text-sm;
+    }
+
+    .section-padding {
+      @apply py-8 px-3;
+    }
+  }
+
+  /* Mobile-friendly phone iframe */
+  .phone-iframe-centered {
+    transform: scale(1);
+    transform-origin: center center;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 640px) {
+    .phone-iframe-centered {
+      transform: scale(0.95);
+    }
+  }
+
+  /* Animation for bounce */
+  @keyframes bounce-slow {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 3s ease-in-out infinite;
+  }
+
   /* Animation delays */
   .animation-delay-1s {
     animation-delay: 1s;
@@ -229,22 +276,5 @@ body {
 
   .animation-delay-2s {
     animation-delay: 2s;
-  }
-
-  /* Phone iframe styling */
-  .phone-iframe {
-    transform: scale(1);
-    transform-origin: top left;
-    min-height: 100%;
-  }
-
-  /* Phone iframe styling - Large version */
-  .phone-iframe-large {
-    transform: scale(1.1);
-    transform-origin: top center;
-    min-height: 110%;
-    width: 110%;
-    margin-left: -5%;
-    margin-top: -2%;
   }
 }
