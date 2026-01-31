@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { SCROLL_CONFIG } from "../constants/animation";
 
-export const useScrollAnimation = (threshold: number = 0.1) => {
+export const useScrollAnimation = (threshold: number = SCROLL_CONFIG.THRESHOLD) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -15,7 +16,7 @@ export const useScrollAnimation = (threshold: number = 0.1) => {
       },
       {
         threshold,
-        rootMargin: "-50px 0px -50px 0px",
+        rootMargin: SCROLL_CONFIG.ROOT_MARGIN,
       }
     );
 
@@ -34,7 +35,7 @@ export const useScrollAnimation = (threshold: number = 0.1) => {
   return [ref, isVisible] as const;
 };
 
-export const useStaggeredAnimation = (delay: number = 100) => {
+export const useStaggeredAnimation = (delay: number = SCROLL_CONFIG.STAGGER_DELAY) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -50,8 +51,8 @@ export const useStaggeredAnimation = (delay: number = 100) => {
         }
       },
       {
-        threshold: 0.1,
-        rootMargin: "-50px 0px -50px 0px",
+        threshold: SCROLL_CONFIG.THRESHOLD,
+        rootMargin: SCROLL_CONFIG.ROOT_MARGIN,
       }
     );
 
@@ -69,3 +70,36 @@ export const useStaggeredAnimation = (delay: number = 100) => {
 
   return [ref, isVisible] as const;
 };
+
+/**
+ * Debounce utility for scroll handlers
+ */
+export const useDebounce = <T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number
+) => {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const debouncedCallback = useCallback(
+    (...args: Parameters<T>) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        callback(...args);
+      }, delay);
+    },
+    [callback, delay]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  return debouncedCallback;
+};
+
