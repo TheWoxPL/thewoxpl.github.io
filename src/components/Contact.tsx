@@ -13,7 +13,12 @@ import {
   sendAutoReply,
   type ContactFormData,
 } from "../utils/emailService";
-import { validateEmail, validateName, validateSubject, validateMessage } from "../utils/validation";
+import {
+  validateEmail,
+  validateName,
+  validateSubject,
+  validateMessage,
+} from "../utils/validation";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const Contact = () => {
@@ -28,10 +33,12 @@ const Contact = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData({
@@ -50,7 +57,9 @@ const Contact = () => {
     }
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setTouchedFields({ ...touchedFields, [name]: true });
     validateField(name, value);
@@ -75,7 +84,7 @@ const Contact = () => {
         return;
     }
 
-    setFieldErrors(prev => ({
+    setFieldErrors((prev) => ({
       ...prev,
       [name]: validation.isValid ? "" : validation.error!,
     }));
@@ -100,7 +109,7 @@ const Contact = () => {
         setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
         setError(
-          result.error || "Failed to send message. Please try again later."
+          result.error || "Failed to send message. Please try again later.",
         );
       }
     } catch (err) {
@@ -133,11 +142,15 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="section-padding bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+    <section
+      id="contact"
+      className="section-padding bg-gray-50 dark:bg-gray-800 transition-colors duration-300"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            {t.contact.title} <span className="gradient-text">{t.contact.titleHighlight}</span>
+            {t.contact.title}{" "}
+            <span className="gradient-text">{t.contact.titleHighlight}</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto mb-8"></div>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
@@ -166,7 +179,9 @@ const Contact = () => {
                   className="flex items-center space-x-4 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md hover:shadow-lg dark:shadow-gray-900/50 transition-all duration-300 group"
                 >
                   <div className="flex-shrink-0 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-blue-800/40 transition-colors duration-300">
-                    <div className="text-blue-600 dark:text-blue-400">{info.icon}</div>
+                    <div className="text-blue-600 dark:text-blue-400">
+                      {info.icon}
+                    </div>
                   </div>
                   <div>
                     <div className="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">
@@ -227,7 +242,9 @@ const Contact = () => {
                       }`}
                       placeholder={t.contact.form.namePlaceholder}
                       aria-invalid={!!fieldErrors.name && touchedFields.name}
-                      aria-describedby={fieldErrors.name ? "name-error" : undefined}
+                      aria-describedby={
+                        fieldErrors.name ? "name-error" : undefined
+                      }
                     />
                     {fieldErrors.name && touchedFields.name && (
                       <p id="name-error" className="mt-1 text-sm text-red-600">
@@ -257,7 +274,9 @@ const Contact = () => {
                       }`}
                       placeholder={t.contact.form.emailPlaceholder}
                       aria-invalid={!!fieldErrors.email && touchedFields.email}
-                      aria-describedby={fieldErrors.email ? "email-error" : undefined}
+                      aria-describedby={
+                        fieldErrors.email ? "email-error" : undefined
+                      }
                     />
                     {fieldErrors.email && touchedFields.email && (
                       <p id="email-error" className="mt-1 text-sm text-red-600">
@@ -288,8 +307,12 @@ const Contact = () => {
                         : "border-gray-300 dark:border-gray-600"
                     }`}
                     placeholder={t.contact.form.subjectPlaceholder}
-                    aria-invalid={!!fieldErrors.subject && touchedFields.subject}
-                    aria-describedby={fieldErrors.subject ? "subject-error" : undefined}
+                    aria-invalid={
+                      !!fieldErrors.subject && touchedFields.subject
+                    }
+                    aria-describedby={
+                      fieldErrors.subject ? "subject-error" : undefined
+                    }
                   />
                   {fieldErrors.subject && touchedFields.subject && (
                     <p id="subject-error" className="mt-1 text-sm text-red-600">
@@ -325,14 +348,18 @@ const Contact = () => {
                     required
                     rows={6}
                     maxLength={1000}
-                    className={`w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none ${
+                    className={`w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none ${
                       fieldErrors.message && touchedFields.message
                         ? "border-red-500 dark:border-red-400"
                         : "border-gray-300 dark:border-gray-600"
                     }`}
                     placeholder={t.contact.form.messagePlaceholder}
-                    aria-invalid={!!fieldErrors.message && touchedFields.message}
-                    aria-describedby={fieldErrors.message ? "message-error" : undefined}
+                    aria-invalid={
+                      !!fieldErrors.message && touchedFields.message
+                    }
+                    aria-describedby={
+                      fieldErrors.message ? "message-error" : undefined
+                    }
                   ></textarea>
                   {fieldErrors.message && touchedFields.message && (
                     <p id="message-error" className="mt-1 text-sm text-red-600">

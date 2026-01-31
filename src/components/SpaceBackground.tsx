@@ -64,10 +64,17 @@ const SpaceBackground: React.FC = () => {
       const velocityRange = SPACE_CONFIG.PARTICLE_VELOCITY;
       this.vx = (Math.random() - 0.5) * velocityRange.SCALE;
       this.vy = (Math.random() - 0.5) * velocityRange.SCALE;
-      this.size = Math.random() * (SPACE_CONFIG.PARTICLE_SIZE.MAX - SPACE_CONFIG.PARTICLE_SIZE.MIN) + SPACE_CONFIG.PARTICLE_SIZE.MIN;
+      this.size =
+        Math.random() *
+          (SPACE_CONFIG.PARTICLE_SIZE.MAX - SPACE_CONFIG.PARTICLE_SIZE.MIN) +
+        SPACE_CONFIG.PARTICLE_SIZE.MIN;
       const opacityRange = SPACE_CONFIG.PARTICLE_OPACITY;
-      this.opacity = Math.random() * (opacityRange.MAX - opacityRange.MIN) + opacityRange.MIN;
-      this.twinkle = Math.random() * (SPACE_CONFIG.TWINKLE.MAX - SPACE_CONFIG.TWINKLE.MIN) + SPACE_CONFIG.TWINKLE.MIN;
+      this.opacity =
+        Math.random() * (opacityRange.MAX - opacityRange.MIN) +
+        opacityRange.MIN;
+      this.twinkle =
+        Math.random() * (SPACE_CONFIG.TWINKLE.MAX - SPACE_CONFIG.TWINKLE.MIN) +
+        SPACE_CONFIG.TWINKLE.MIN;
       this.twinkleDirection = 1;
     }
 
@@ -115,7 +122,8 @@ const SpaceBackground: React.FC = () => {
       this.y = y;
       this.radius = 0;
       const radiusRange = SPACE_CONFIG.CLICK_EFFECT.MAX_RADIUS;
-      this.maxRadius = Math.random() * (radiusRange.MAX - radiusRange.MIN) + radiusRange.MIN;
+      this.maxRadius =
+        Math.random() * (radiusRange.MAX - radiusRange.MIN) + radiusRange.MIN;
       this.opacity = 1;
       this.growth = SPACE_CONFIG.CLICK_EFFECT.GROWTH_RATE;
       this.decay = SPACE_CONFIG.CLICK_EFFECT.DECAY_RATE;
@@ -242,7 +250,7 @@ const SpaceBackground: React.FC = () => {
         0,
         canvas.width / 2,
         canvas.height / 2,
-        canvas.width
+        canvas.width,
       );
       gradient.addColorStop(0, "#0f172a");
       gradient.addColorStop(0.5, "#1e293b");
@@ -300,7 +308,7 @@ const SpaceBackground: React.FC = () => {
 
       setClickEffects((effects) => [...effects, new ClickEffect(x, y)]);
     },
-    []
+    [],
   );
 
   return (
