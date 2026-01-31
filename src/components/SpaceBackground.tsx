@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, memo, useCallback } from "react";
+import { SPACE_CONFIG, BREAKPOINTS } from "../constants/animation";
 
 interface ParticleType {
   x: number;
@@ -60,11 +61,13 @@ const SpaceBackground: React.FC = () => {
       this.canvas = canvas;
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.vx = (Math.random() - 0.5) * 0.5;
-      this.vy = (Math.random() - 0.5) * 0.5;
-      this.size = Math.random() * 2 + 0.5;
-      this.opacity = Math.random() * 0.8 + 0.2;
-      this.twinkle = Math.random() * 0.02 + 0.01;
+      const velocityRange = SPACE_CONFIG.PARTICLE_VELOCITY;
+      this.vx = (Math.random() - 0.5) * velocityRange.SCALE;
+      this.vy = (Math.random() - 0.5) * velocityRange.SCALE;
+      this.size = Math.random() * (SPACE_CONFIG.PARTICLE_SIZE.MAX - SPACE_CONFIG.PARTICLE_SIZE.MIN) + SPACE_CONFIG.PARTICLE_SIZE.MIN;
+      const opacityRange = SPACE_CONFIG.PARTICLE_OPACITY;
+      this.opacity = Math.random() * (opacityRange.MAX - opacityRange.MIN) + opacityRange.MIN;
+      this.twinkle = Math.random() * (SPACE_CONFIG.TWINKLE.MAX - SPACE_CONFIG.TWINKLE.MIN) + SPACE_CONFIG.TWINKLE.MIN;
       this.twinkleDirection = 1;
     }
 
@@ -111,22 +114,24 @@ const SpaceBackground: React.FC = () => {
       this.x = x;
       this.y = y;
       this.radius = 0;
-      this.maxRadius = Math.random() * 100 + 50;
+      const radiusRange = SPACE_CONFIG.CLICK_EFFECT.MAX_RADIUS;
+      this.maxRadius = Math.random() * (radiusRange.MAX - radiusRange.MIN) + radiusRange.MIN;
       this.opacity = 1;
-      this.growth = 2;
-      this.decay = 0.02;
+      this.growth = SPACE_CONFIG.CLICK_EFFECT.GROWTH_RATE;
+      this.decay = SPACE_CONFIG.CLICK_EFFECT.DECAY_RATE;
       this.particles = [];
 
       // Create small particles for the explosion effect
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < SPACE_CONFIG.CLICK_EFFECT.EXPLOSION_PARTICLES; i++) {
+        const velocityScale = SPACE_CONFIG.CLICK_EFFECT.VELOCITY_SCALE;
         this.particles.push({
           x: x,
           y: y,
-          vx: (Math.random() - 0.5) * 8,
-          vy: (Math.random() - 0.5) * 8,
+          vx: (Math.random() - 0.5) * velocityScale,
+          vy: (Math.random() - 0.5) * velocityScale,
           size: Math.random() * 3 + 1,
           opacity: 1,
-          decay: 0.03,
+          decay: SPACE_CONFIG.CLICK_EFFECT.PARTICLE_DECAY,
         });
       }
     }
@@ -139,8 +144,9 @@ const SpaceBackground: React.FC = () => {
       this.particles.forEach((particle) => {
         particle.x += particle.vx;
         particle.y += particle.vy;
-        particle.vx *= 0.98;
-        particle.vy *= 0.98;
+        const friction = SPACE_CONFIG.CLICK_EFFECT.VELOCITY_FRICTION;
+        particle.vx *= friction;
+        particle.vy *= friction;
         particle.opacity -= particle.decay;
       });
 
@@ -183,6 +189,17 @@ const SpaceBackground: React.FC = () => {
     }
   }
 
+  // Get optimal particle count based on device
+  const getParticleCount = useCallback(() => {
+    const width = window.innerWidth;
+    if (width < BREAKPOINTS.MOBILE) {
+      return SPACE_CONFIG.PARTICLE_COUNT.MOBILE;
+    } else if (width < BREAKPOINTS.TABLET) {
+      return SPACE_CONFIG.PARTICLE_COUNT.TABLET;
+    }
+    return SPACE_CONFIG.PARTICLE_COUNT.DESKTOP;
+  }, []);
+
   // Initialize particles
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -196,9 +213,9 @@ const SpaceBackground: React.FC = () => {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Create particles
+    // Create particles based on device
     const newParticles = [];
-    const particleCount = Math.floor((canvas.width * canvas.height) / 8000);
+    const particleCount = getParticleCount();
 
     for (let i = 0; i < particleCount; i++) {
       newParticles.push(new Particle(canvas));
@@ -209,7 +226,7 @@ const SpaceBackground: React.FC = () => {
     return () => {
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, []);
+  }, [getParticleCount]);
 
   // Animation loop
   useEffect(() => {
@@ -273,15 +290,18 @@ const SpaceBackground: React.FC = () => {
   }, []);
 
   // Handle clicks for creating effects
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current) return;
+  const handleCanvasClick = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (!canvasRef.current) return;
 
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-    setClickEffects((effects) => [...effects, new ClickEffect(x, y)]);
-  };
+      setClickEffects((effects) => [...effects, new ClickEffect(x, y)]);
+    },
+    []
+  );
 
   return (
     <canvas
@@ -292,4 +312,4 @@ const SpaceBackground: React.FC = () => {
   );
 };
 
-export default SpaceBackground;
+export default memo(SpaceBackground);
