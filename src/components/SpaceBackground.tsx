@@ -23,6 +23,9 @@ interface ExplosionParticle {
   size: number;
   opacity: number;
   decay: number;
+  color: string;
+  shape: 'circle' | 'star';
+  gravity: number;
 }
 
 interface ClickEffectType {
@@ -42,7 +45,13 @@ const SpaceBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const [particles, setParticles] = useState<ParticleType[]>([]);
-  const [clickEffects, setClickEffects] = useState<ClickEffectType[]>([]);
+  const clickEffectsRef = useRef<ClickEffectType[]>([]);
+  const lastClickTime = useRef<number>(0);
+  const lastClickPos = useRef<{ x: number; y: number } | null>(null);
+  const clickCounter = useRef<number>(0);
+  const counterDisplayTime = useRef<number>(0);
+  const CLICK_COOLDOWN = 150; // Minimum ms between clicks
+  const COUNTER_DISPLAY_DURATION = 2000; // Show counter for 2 seconds
   const mousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // Particle class
@@ -129,17 +138,74 @@ const SpaceBackground: React.FC = () => {
       this.decay = SPACE_CONFIG.CLICK_EFFECT.DECAY_RATE;
       this.particles = [];
 
-      // Create small particles for the explosion effect
-      for (let i = 0; i < SPACE_CONFIG.CLICK_EFFECT.EXPLOSION_PARTICLES; i++) {
-        const velocityScale = SPACE_CONFIG.CLICK_EFFECT.VELOCITY_SCALE;
+      // Colorful firework colors
+      const fireworkColors = [
+        '#ff6b6b', // red
+        '#feca57', // yellow
+        '#48dbfb', // cyan
+        '#ff9ff3', // pink
+        '#54a0ff', // blue
+        '#5f27cd', // purple
+        '#00d2d3', // teal
+        '#ff9f43', // orange
+        '#ffffff', // white
+        '#1dd1a1', // green
+      ];
+
+      // Create circular burst of particles
+      const particleCount = 40;
+      for (let i = 0; i < particleCount; i++) {
+        const angle = (Math.PI * 2 * i) / particleCount;
+        const speed = Math.random() * 6 + 3;
+        const color = fireworkColors[Math.floor(Math.random() * fireworkColors.length)];
         this.particles.push({
           x: x,
           y: y,
-          vx: (Math.random() - 0.5) * velocityScale,
-          vy: (Math.random() - 0.5) * velocityScale,
-          size: Math.random() * 3 + 1,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 4 + 2,
           opacity: 1,
-          decay: SPACE_CONFIG.CLICK_EFFECT.PARTICLE_DECAY,
+          decay: 0.012 + Math.random() * 0.008,
+          color: color,
+          shape: 'circle',
+          gravity: 0.05,
+        });
+      }
+
+      // Create additional sparkle stars
+      for (let i = 0; i < 25; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 8 + 2;
+        const color = fireworkColors[Math.floor(Math.random() * fireworkColors.length)];
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 6 + 3,
+          opacity: 1,
+          decay: 0.015 + Math.random() * 0.01,
+          color: color,
+          shape: 'star',
+          gravity: 0.03,
+        });
+      }
+
+      // Create trailing sparks
+      for (let i = 0; i < 20; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1;
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 2 + 1,
+          opacity: 1,
+          decay: 0.02,
+          color: '#ffffff',
+          shape: 'circle',
+          gravity: 0.08,
         });
       }
     }
@@ -148,11 +214,12 @@ const SpaceBackground: React.FC = () => {
       this.radius += this.growth;
       this.opacity -= this.decay;
 
-      // Update explosion particles
+      // Update explosion particles with gravity
       this.particles.forEach((particle) => {
         particle.x += particle.vx;
         particle.y += particle.vy;
-        const friction = SPACE_CONFIG.CLICK_EFFECT.VELOCITY_FRICTION;
+        particle.vy += particle.gravity; // Add gravity
+        const friction = 0.98;
         particle.vx *= friction;
         particle.vy *= friction;
         particle.opacity -= particle.decay;
@@ -184,14 +251,47 @@ const SpaceBackground: React.FC = () => {
         ctx.restore();
       }
 
-      // Draw explosion particles
+      // Draw colorful firework particles
       this.particles.forEach((particle) => {
         ctx.save();
         ctx.globalAlpha = particle.opacity;
-        ctx.fillStyle = "#93c5fd";
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
+        
+        // Add glow effect
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = particle.color;
+        ctx.fillStyle = particle.color;
+        
+        if (particle.shape === 'star') {
+          // Draw 4-pointed star
+          ctx.beginPath();
+          const spikes = 4;
+          const outerRadius = particle.size;
+          const innerRadius = particle.size / 2;
+          
+          for (let i = 0; i < spikes * 2; i++) {
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const angle = (Math.PI * i) / spikes - Math.PI / 2;
+            const px = particle.x + Math.cos(angle) * radius;
+            const py = particle.y + Math.sin(angle) * radius;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          // Draw glowing circle
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Add extra bright center
+          ctx.globalAlpha = particle.opacity * 0.5;
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size * 0.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
         ctx.restore();
       });
     }
@@ -266,14 +366,61 @@ const SpaceBackground: React.FC = () => {
       });
 
       // Update and draw click effects
-      setClickEffects((effects) => {
-        const updatedEffects = effects.filter((effect) => {
-          effect.update();
-          effect.draw(ctx);
-          return effect.opacity > 0 || effect.particles.length > 0;
-        });
-        return updatedEffects;
+      clickEffectsRef.current = clickEffectsRef.current.filter((effect) => {
+        effect.update();
+        effect.draw(ctx);
+        return effect.opacity > 0 || effect.particles.length > 0;
       });
+
+      // Draw click counter with fade out (follows cursor)
+      const now = Date.now();
+      const timeSinceDisplay = now - counterDisplayTime.current;
+      
+      if (timeSinceDisplay < COUNTER_DISPLAY_DURATION && clickCounter.current > 0) {
+        const { x, y } = mousePos.current;
+        
+        // Calculate fade: full opacity for first 1.5s, then fade out over 0.5s
+        const fadeStart = COUNTER_DISPLAY_DURATION - 500;
+        let opacity = 1;
+        if (timeSinceDisplay > fadeStart) {
+          opacity = 1 - (timeSinceDisplay - fadeStart) / 500;
+        }
+        
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        
+        // Draw background pill
+        const text = `✨ ${clickCounter.current}`;
+        ctx.font = 'bold 14px system-ui, sans-serif';
+        const textWidth = ctx.measureText(text).width;
+        const pillWidth = textWidth + 20;
+        const pillHeight = 28;
+        const pillX = x - pillWidth / 2;
+        const pillY = y - 45;
+        
+        // Pill background with gradient
+        const gradient = ctx.createLinearGradient(pillX, pillY, pillX + pillWidth, pillY);
+        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)');
+        gradient.addColorStop(1, 'rgba(168, 85, 247, 0.8)');
+        
+        ctx.beginPath();
+        ctx.roundRect(pillX, pillY, pillWidth, pillHeight, 14);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Border glow
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Counter text
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, x, pillY + pillHeight / 2);
+        
+        ctx.restore();
+      }
 
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -297,16 +444,38 @@ const SpaceBackground: React.FC = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Handle clicks for creating effects
+  // Handle clicks for creating effects with rate limiting
   const handleCanvasClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (!canvasRef.current) return;
-
+      
       const rect = canvasRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
+      
+      // Always update click position for counter display
+      lastClickPos.current = { x, y };
+      
+      const now = Date.now();
+      const MAX_ACTIVE_EFFECTS = 5; // Maximum simultaneous effects
+      
+      // Rate limit: ignore clicks that are too fast
+      if (now - lastClickTime.current < CLICK_COOLDOWN) {
+        return;
+      }
+      
+      // Limit max active effects to prevent lag
+      if (clickEffectsRef.current.length >= MAX_ACTIVE_EFFECTS) {
+        return;
+      }
+      
+      lastClickTime.current = now;
+      
+      // Increment counter and update display time
+      clickCounter.current += 1;
+      counterDisplayTime.current = now;
 
-      setClickEffects((effects) => [...effects, new ClickEffect(x, y)]);
+      clickEffectsRef.current.push(new ClickEffect(x, y));
     },
     [],
   );
@@ -314,8 +483,9 @@ const SpaceBackground: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full cursor-crosshair"
+      className="absolute inset-0 w-full h-full cursor-crosshair z-0"
       onClick={handleCanvasClick}
+      style={{ pointerEvents: 'auto' }}
     />
   );
 };

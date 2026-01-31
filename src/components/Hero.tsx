@@ -40,8 +40,8 @@ const Hero = () => {
       {/* Space Background */}
       <SpaceBackground />
 
-      {/* Content Overlay */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Content Overlay - pointer-events-none allows clicks to pass through to background */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pointer-events-none">
         <div className="animate-fade-in">
           {/* Greeting */}
           <p className="text-lg text-blue-200 mb-4">{t.hero.greeting}</p>
@@ -68,7 +68,7 @@ const Hero = () => {
             <a
               href="#contact"
               onClick={(e) => smoothScrollTo("#contact", e)}
-              className="btn-space-primary inline-flex items-center gap-2 transform hover:scale-105 transition-transform duration-300"
+              className="btn-space-primary inline-flex items-center gap-2 transform hover:scale-105 transition-transform duration-300 pointer-events-auto"
             >
               <span>{t.hero.cta}</span>
             </a>
@@ -86,7 +86,7 @@ const Hero = () => {
           <div className="flex justify-center space-x-6 mb-16">
             <a
               href="https://github.com/thewoxpl"
-              className="p-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 hover:scale-110 transition-all duration-300"
+              className="p-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 hover:scale-110 transition-all duration-300 pointer-events-auto"
               aria-label="GitHub"
               target="_blank"
               rel="noopener noreferrer"
@@ -95,7 +95,7 @@ const Hero = () => {
             </a>
             <a
               href="https://www.linkedin.com/in/wojciech-bubula"
-              className="p-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 hover:scale-110 transition-all duration-300"
+              className="p-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 hover:scale-110 transition-all duration-300 pointer-events-auto"
               aria-label="LinkedIn"
               target="_blank"
               rel="noopener noreferrer"
@@ -109,7 +109,7 @@ const Hero = () => {
             <a
               href="#about"
               onClick={(e) => smoothScrollTo("#about", e)}
-              className="inline-block p-2 hover:scale-110 transition-transform duration-300"
+              className="inline-block p-2 hover:scale-110 transition-transform duration-300 pointer-events-auto"
               aria-label={t.hero.scrollDown}
             >
               <ArrowDown
