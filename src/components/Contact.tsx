@@ -13,6 +13,7 @@ import {
   sendAutoReply,
   type ContactFormData,
 } from "../utils/emailService";
+import { validateEmail, validateName, validateSubject, validateMessage } from "../utils/validation";
 
 const Contact = () => {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -24,18 +25,58 @@ const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
-    // Clear error when user starts typing
+
+    // Real-time validation for touched fields
+    if (touchedFields[name]) {
+      validateField(name, value);
+    }
+
+    // Clear global error when user starts typing
     if (error) {
       setError(null);
     }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setTouchedFields({ ...touchedFields, [name]: true });
+    validateField(name, value);
+  };
+
+  const validateField = (name: string, value: string) => {
+    let validation;
+    switch (name) {
+      case "name":
+        validation = validateName(value);
+        break;
+      case "email":
+        validation = validateEmail(value);
+        break;
+      case "subject":
+        validation = validateSubject(value);
+        break;
+      case "message":
+        validation = validateMessage(value);
+        break;
+      default:
+        return;
+    }
+
+    setFieldErrors(prev => ({
+      ...prev,
+      [name]: validation.isValid ? "" : validation.error!,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -180,10 +221,22 @@ const Contact = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                        fieldErrors.name && touchedFields.name
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
                       placeholder="Name"
+                      aria-invalid={!!fieldErrors.name && touchedFields.name}
+                      aria-describedby={fieldErrors.name ? "name-error" : undefined}
                     />
+                    {fieldErrors.name && touchedFields.name && (
+                      <p id="name-error" className="mt-1 text-sm text-red-600">
+                        {fieldErrors.name}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -198,10 +251,22 @@ const Contact = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                        fieldErrors.email && touchedFields.email
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
                       placeholder="your.email@example.com"
+                      aria-invalid={!!fieldErrors.email && touchedFields.email}
+                      aria-describedby={fieldErrors.email ? "email-error" : undefined}
                     />
+                    {fieldErrors.email && touchedFields.email && (
+                      <p id="email-error" className="mt-1 text-sm text-red-600">
+                        {fieldErrors.email}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -218,29 +283,65 @@ const Contact = () => {
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                      fieldErrors.subject && touchedFields.subject
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     placeholder="What's this about?"
+                    aria-invalid={!!fieldErrors.subject && touchedFields.subject}
+                    aria-describedby={fieldErrors.subject ? "subject-error" : undefined}
                   />
+                  {fieldErrors.subject && touchedFields.subject && (
+                    <p id="subject-error" className="mt-1 text-sm text-red-600">
+                      {fieldErrors.subject}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Message *
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Message *
+                    </label>
+                    <span
+                      className={`text-xs ${
+                        formData.message.length > 1000
+                          ? "text-red-600"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {formData.message.length}/1000
+                    </span>
+                  </div>
                   <textarea
                     id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required
                     rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                    maxLength={1000}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none ${
+                      fieldErrors.message && touchedFields.message
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     placeholder="Write message here"
+                    aria-invalid={!!fieldErrors.message && touchedFields.message}
+                    aria-describedby={fieldErrors.message ? "message-error" : undefined}
                   ></textarea>
+                  {fieldErrors.message && touchedFields.message && (
+                    <p id="message-error" className="mt-1 text-sm text-red-600">
+                      {fieldErrors.message}
+                    </p>
+                  )}
                 </div>
 
                 <button
