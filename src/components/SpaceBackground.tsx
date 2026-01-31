@@ -47,11 +47,7 @@ const SpaceBackground: React.FC = () => {
   const [particles, setParticles] = useState<ParticleType[]>([]);
   const clickEffectsRef = useRef<ClickEffectType[]>([]);
   const lastClickTime = useRef<number>(0);
-  const lastClickPos = useRef<{ x: number; y: number } | null>(null);
-  const clickCounter = useRef<number>(0);
-  const counterDisplayTime = useRef<number>(0);
   const CLICK_COOLDOWN = 150; // Minimum ms between clicks
-  const COUNTER_DISPLAY_DURATION = 2000; // Show counter for 2 seconds
   const mousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // Particle class
@@ -372,56 +368,6 @@ const SpaceBackground: React.FC = () => {
         return effect.opacity > 0 || effect.particles.length > 0;
       });
 
-      // Draw click counter with fade out (follows cursor)
-      const now = Date.now();
-      const timeSinceDisplay = now - counterDisplayTime.current;
-      
-      if (timeSinceDisplay < COUNTER_DISPLAY_DURATION && clickCounter.current > 0) {
-        const { x, y } = mousePos.current;
-        
-        // Calculate fade: full opacity for first 1.5s, then fade out over 0.5s
-        const fadeStart = COUNTER_DISPLAY_DURATION - 500;
-        let opacity = 1;
-        if (timeSinceDisplay > fadeStart) {
-          opacity = 1 - (timeSinceDisplay - fadeStart) / 500;
-        }
-        
-        ctx.save();
-        ctx.globalAlpha = opacity;
-        
-        // Draw background pill
-        const text = `✨ ${clickCounter.current}`;
-        ctx.font = 'bold 14px system-ui, sans-serif';
-        const textWidth = ctx.measureText(text).width;
-        const pillWidth = textWidth + 20;
-        const pillHeight = 28;
-        const pillX = x - pillWidth / 2;
-        const pillY = y - 45;
-        
-        // Pill background with gradient
-        const gradient = ctx.createLinearGradient(pillX, pillY, pillX + pillWidth, pillY);
-        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)');
-        gradient.addColorStop(1, 'rgba(168, 85, 247, 0.8)');
-        
-        ctx.beginPath();
-        ctx.roundRect(pillX, pillY, pillWidth, pillHeight, 14);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        
-        // Border glow
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        
-        // Counter text
-        ctx.fillStyle = '#ffffff';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, x, pillY + pillHeight / 2);
-        
-        ctx.restore();
-      }
-
       animationRef.current = requestAnimationFrame(animate);
     };
 
@@ -453,9 +399,6 @@ const SpaceBackground: React.FC = () => {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       
-      // Always update click position for counter display
-      lastClickPos.current = { x, y };
-      
       const now = Date.now();
       const MAX_ACTIVE_EFFECTS = 5; // Maximum simultaneous effects
       
@@ -470,10 +413,6 @@ const SpaceBackground: React.FC = () => {
       }
       
       lastClickTime.current = now;
-      
-      // Increment counter and update display time
-      clickCounter.current += 1;
-      counterDisplayTime.current = now;
 
       clickEffectsRef.current.push(new ClickEffect(x, y));
     },
