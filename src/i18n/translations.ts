@@ -13,7 +13,7 @@ export const translations = {
     hero: {
       greeting: "Hello, I'm",
       name: 'Wojciech',
-      title: 'Frontend Developer & Fullstack Enthusiast',
+      title: 'Full Stack Developer',
       description: 'I create beautiful, responsive web applications with modern technologies. Passionate about clean code, user experience, and innovative solutions.',
       cta: 'Get In Touch',
       downloadCV: 'Download CV',
@@ -24,7 +24,7 @@ export const translations = {
       title: 'About',
       titleHighlight: 'Me',
       subtitle: 'Passionate Developer with a Vision',
-      description1: "I'm a dedicated frontend developer with many years of experience creating digital solutions while creating own projects. My journey started with curiosity about how websites work and has evolved into a passion for crafting exceptional user experiences.",
+      description1: "I'm a dedicated fullstack developer with many years of experience creating digital solutions while creating own projects. My journey started with curiosity about how websites work and has evolved into a passion for crafting exceptional user experiences.",
       description2: "I specialize in React, NestJS, and modern web technologies. When I'm not coding, you'll find me exploring new technologies, or focusing on personal projects that challenge my skills, or on my personal hobbies.",
       stats: {
         projects: 'Projects',
@@ -126,7 +126,7 @@ export const translations = {
     footer: {
       about: {
         title: 'Wojciech Bubula',
-        subtitle: 'Frontend Developer & Fullstack Enthusiast',
+        subtitle: 'Fullstack developer',
         description: 'Passionate about creating beautiful, functional web applications that solve real-world problems and provide exceptional user experiences.',
       },
       quickLinks: {
@@ -162,8 +162,8 @@ export const translations = {
     hero: {
       greeting: 'Cześć, jestem',
       name: 'Wojciech',
-      title: 'Frontend Developer & Entuzjasta Full Stack',
-      description: 'Tworzę piękne, responsywne aplikacje webowe wykorzystując nowoczesne technologie. Pasjonuję się czystym kodem, user experience i innowacyjnymi rozwiązaniami.',
+      title: 'Full Stack Developer',
+      description: 'Tworzę nowoczesne, responsywne aplikacje webowe wykorzystując nowoczesne technologie. Pasjonuję się czystym kodem, user experience i innowacyjnymi rozwiązaniami.',
       cta: 'Skontaktuj się',
       downloadCV: 'Pobierz CV',
       scrollDown: 'Przewiń do sekcji O mnie',
@@ -173,8 +173,8 @@ export const translations = {
       title: 'O',
       titleHighlight: 'Mnie',
       subtitle: 'Pasjonat Programowania z Wizją',
-      description1: 'Jestem oddanym frontend developerem z wieloletnim doświadczeniem w tworzeniu rozwiązań cyfrowych podczas realizacji własnych projektów. Moja podróż rozpoczęła się od ciekawości jak działają strony internetowe, a przekształciła się w pasję tworzenia wyjątkowych doświadczeń użytkownika.',
-      description2: 'Specjalizuję się w React, NestJS i nowoczesnych technologiach webowych. Gdy nie koduję, eksploruję nowe technologie, skupiam się na osobistych projektach które rozwijają moje umiejętności, lub oddaję się moim hobby.',
+      description1: 'Jestem fullstack developerem z wieloletnim doświadczeniem w tworzeniu rozwiązań cyfrowych podczas realizacji własnych projektów. Moja podróż rozpoczęła się od ciekawości jak działają strony internetowe, a przekształciła się w pasję tworzenia wyjątkowych doświadczeń użytkownika.',
+      description2: 'Specjalizuję się w React, NestJS i nowoczesnych technologiach webowych. Gdy nie koduję, eksploruję nowe technologie, skupiam się na osobistych projektach, które rozwijają moje umiejętności lub oddaję się moim hobby.',
       stats: {
         projects: 'Projektów',
         experience: 'Lat Doświadczenia',
@@ -199,7 +199,7 @@ export const translations = {
     skills: {
       title: 'Umiejętności i',
       titleHighlight: 'Technologie',
-      subtitle: 'Pasjonuję się nowoczesnymi technologiami webowymi i najlepszymi praktykami w tworzeniu oprogramowania',
+      subtitle: 'Pasjonuję się nowoczesnymi technologiami webowymi i dobrymi praktykami w tworzeniu oprogramowania',
       categories: {
         frontend: 'Frontend Development',
         backend: 'Backend Development',
@@ -218,7 +218,7 @@ export const translations = {
         },
         database: {
           title: 'Projektowanie Baz Danych',
-          description: 'Efektywne schematy baz danych oraz optymalizacja zapytań',
+          description: 'Efektywne schematy baz danych',
         },
         devops: {
           title: 'DevOps & Deployment',
@@ -275,8 +275,8 @@ export const translations = {
     footer: {
       about: {
         title: 'Wojciech Bubula',
-        subtitle: 'Frontend Developer & Entuzjasta Full Stack',
-        description: 'Pasjonuję się tworzeniem pięknych, funkcjonalnych aplikacji webowych, które rozwiązują rzeczywiste problemy i zapewniają wyjątkowe doświadczenia użytkownika.',
+        subtitle: ' Full Stack Developer',
+        description: 'Pasjonuję się tworzeniem nowoczesnych, funkcjonalnych aplikacji webowych, które rozwiązują rzeczywiste problemy i zapewniają wyjątkowe doświadczenia użytkownika.',
       },
       quickLinks: {
         title: 'Szybkie Linki',
