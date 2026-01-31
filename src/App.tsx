@@ -1,4 +1,6 @@
 import React from "react";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -9,15 +11,19 @@ import Footer from "./components/Footer";
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Contact />
-      <Footer />
-    </div>
+    <ThemeProvider>
+      <LanguageProvider>
+        <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+          <Header />
+          <Hero />
+          <About />
+          <Skills />
+          <Projects />
+          <Contact />
+          <Footer />
+        </div>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 };
 

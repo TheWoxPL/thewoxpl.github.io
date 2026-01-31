@@ -1,7 +1,9 @@
 import React from "react";
 import { ExternalLink, Github, Star } from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const Projects: React.FC = () => {
+  const { t } = useLanguage();
   const featuredProject = {
     title: "Local Service Mechanic",
     description:
@@ -82,48 +84,47 @@ const Projects: React.FC = () => {
   ];
 
   return (
-    <section id="projects" className="section-padding bg-white">
+    <section id="projects" className="section-padding bg-white dark:bg-gray-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Featured <span className="gradient-text">Projects</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            {t.projects.title} <span className="gradient-text">{t.projects.titleHighlight}</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto mb-8"></div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Here are some of my recent projects that showcase my skills and
-            passion for development
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            {t.projects.subtitle}
           </p>
         </div>
 
         {/* Featured Project */}
-        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 md:p-8 mb-16 shadow-xl">
+        <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-4 md:p-8 mb-16 shadow-xl dark:shadow-gray-900/50">
           <div className="flex items-center gap-2 mb-6">
             <Star className="w-5 h-5 md:w-6 md:h-6 text-yellow-500 fill-current" />
-            <span className="text-base md:text-lg font-semibold text-gray-700">
-              Featured Project
+            <span className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-200">
+              {t.projects.featuredProject}
             </span>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
             <div className="order-2 lg:order-1">
-              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
                 {featuredProject.title}
               </h3>
-              <p className="text-base md:text-lg text-gray-600 mb-6 leading-relaxed">
+              <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
                 {featuredProject.description}
               </p>
 
               <div className="mb-6">
-                <h4 className="text-lg md:text-xl font-semibold text-gray-900 mb-3">
-                  Key Features:
+                <h4 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                  {t.projects.keyFeatures}
                 </h4>
                 <ul className="space-y-2">
                   {featuredProject.highlights.map((highlight, index) => (
                     <li
                       key={index}
-                      className="flex items-start text-gray-600 text-sm md:text-base"
+                      className="flex items-start text-gray-600 dark:text-gray-300 text-sm md:text-base"
                     >
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mr-3 mt-2 flex-shrink-0"></div>
                       {highlight}
                     </li>
                   ))}
@@ -134,7 +135,7 @@ const Projects: React.FC = () => {
                 {featuredProject.technologies.map((tech, index) => (
                   <span
                     key={index}
-                    className="px-2 md:px-3 py-1 bg-white text-gray-700 rounded-full text-xs md:text-sm font-medium shadow-sm"
+                    className="px-2 md:px-3 py-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs md:text-sm font-medium shadow-sm"
                   >
                     {tech}
                   </span>
@@ -145,16 +146,20 @@ const Projects: React.FC = () => {
                 <a
                   href={featuredProject.liveUrl}
                   className="btn-primary inline-flex items-center justify-center gap-2 text-sm md:text-base"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <ExternalLink size={18} />
-                  Live Demo
+                  {t.projects.liveDemo}
                 </a>
                 <a
                   href={featuredProject.githubUrl}
                   className="btn-secondary inline-flex items-center justify-center gap-2 text-sm md:text-base"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Github size={18} />
-                  View Code
+                  {t.projects.viewCode}
                 </a>
               </div>
             </div>
@@ -208,7 +213,7 @@ const Projects: React.FC = () => {
           {projects.map((project, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl dark:shadow-gray-900/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
             >
               <div className="relative overflow-hidden group">
                 <img
@@ -239,17 +244,17 @@ const Projects: React.FC = () => {
               </div>
 
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
                   {project.title}
                 </h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">
+                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                   {project.description}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {project.technologies.map((tech, techIndex) => (
                     <span
                       key={techIndex}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium"
+                      className="px-3 py-1 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium"
                     >
                       {tech}
                     </span>

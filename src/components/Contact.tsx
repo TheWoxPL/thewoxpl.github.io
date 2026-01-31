@@ -14,8 +14,10 @@ import {
   type ContactFormData,
 } from "../utils/emailService";
 import { validateEmail, validateName, validateSubject, validateMessage } from "../utils/validation";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const Contact = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -112,35 +114,34 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: <Mail className="w-6 h-6" />,
-      label: "Email",
+      label: t.contact.info.email,
       value: "wojciech.bubula@outlook.com",
       href: "mailto:wojciech.bubula@outlook.com",
     },
     {
       icon: <Phone className="w-6 h-6" />,
-      label: "Phone",
+      label: t.contact.info.phone,
       value: "+48 *** *** ***",
       href: "tel:+00 000 000 000",
     },
     {
       icon: <MapPin className="w-6 h-6" />,
-      label: "Location",
-      value: "Cracow, Poland",
+      label: t.contact.info.location,
+      value: t.contact.info.locationValue,
       href: "#",
     },
   ];
 
   return (
-    <section id="contact" className="section-padding bg-gray-50">
+    <section id="contact" className="section-padding bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Get In <span className="gradient-text">Touch</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            {t.contact.title} <span className="gradient-text">{t.contact.titleHighlight}</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto mb-8"></div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Ready to start your next project? Let's work together to bring your
-            ideas to life.
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            {t.contact.subtitle}
           </p>
         </div>
 
@@ -148,14 +149,11 @@ const Contact = () => {
           {/* Contact Information */}
           <div className="space-y-8">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                Let's start a conversation
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                {t.contact.formTitle}
               </h3>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                I'm always interested in hearing about new opportunities and
-                exciting projects. Whether you're a company looking to hire, or
-                you're a fellow developer wanting to collaborate, I'd love to
-                hear from you.
+              <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                {t.contact.formDescription}
               </p>
             </div>
 
@@ -165,16 +163,16 @@ const Contact = () => {
                 <a
                   key={index}
                   href={info.href}
-                  className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 group"
+                  className="flex items-center space-x-4 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md hover:shadow-lg dark:shadow-gray-900/50 transition-all duration-300 group"
                 >
-                  <div className="flex-shrink-0 p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors duration-300">
-                    <div className="text-blue-600">{info.icon}</div>
+                  <div className="flex-shrink-0 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-blue-800/40 transition-colors duration-300">
+                    <div className="text-blue-600 dark:text-blue-400">{info.icon}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">
                       {info.label}
                     </div>
-                    <div className="text-gray-900 font-semibold">
+                    <div className="text-gray-900 dark:text-white font-semibold">
                       {info.value}
                     </div>
                   </div>
@@ -183,37 +181,36 @@ const Contact = () => {
             </div>
 
             {/* Availability */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6">
               <div className="flex items-center space-x-3">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-800 font-semibold">
-                  Available for new projects
+                <span className="text-green-800 dark:text-green-300 font-semibold">
+                  {t.contact.availability}
                 </span>
               </div>
-              <p className="text-green-700 mt-2">
-                Currently accepting new client work and interesting project
-                opportunities.
+              <p className="text-green-700 dark:text-green-400 mt-2">
+                {t.contact.availabilityDescription}
               </p>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg dark:shadow-gray-900/50 p-8">
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3">
-                    <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                    <p className="text-red-700">{error}</p>
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-center space-x-3">
+                    <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0" />
+                    <p className="text-red-700 dark:text-red-300">{error}</p>
                   </div>
                 )}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      Name / Company name *
+                      {t.contact.form.name} {t.contact.form.required}
                     </label>
                     <input
                       type="text"
@@ -223,12 +220,12 @@ const Contact = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       required
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                      className={`w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                         fieldErrors.name && touchedFields.name
-                          ? "border-red-500"
-                          : "border-gray-300"
+                          ? "border-red-500 dark:border-red-400"
+                          : "border-gray-300 dark:border-gray-600"
                       }`}
-                      placeholder="Name"
+                      placeholder={t.contact.form.namePlaceholder}
                       aria-invalid={!!fieldErrors.name && touchedFields.name}
                       aria-describedby={fieldErrors.name ? "name-error" : undefined}
                     />
@@ -241,9 +238,9 @@ const Contact = () => {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      Email *
+                      {t.contact.form.email} {t.contact.form.required}
                     </label>
                     <input
                       type="email"
@@ -253,12 +250,12 @@ const Contact = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       required
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                      className={`w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                         fieldErrors.email && touchedFields.email
-                          ? "border-red-500"
-                          : "border-gray-300"
+                          ? "border-red-500 dark:border-red-400"
+                          : "border-gray-300 dark:border-gray-600"
                       }`}
-                      placeholder="your.email@example.com"
+                      placeholder={t.contact.form.emailPlaceholder}
                       aria-invalid={!!fieldErrors.email && touchedFields.email}
                       aria-describedby={fieldErrors.email ? "email-error" : undefined}
                     />
@@ -273,9 +270,9 @@ const Contact = () => {
                 <div>
                   <label
                     htmlFor="subject"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
-                    Subject *
+                    {t.contact.form.subject} {t.contact.form.required}
                   </label>
                   <input
                     type="text"
@@ -285,12 +282,12 @@ const Contact = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     required
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                    className={`w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                       fieldErrors.subject && touchedFields.subject
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "border-red-500 dark:border-red-400"
+                        : "border-gray-300 dark:border-gray-600"
                     }`}
-                    placeholder="What's this about?"
+                    placeholder={t.contact.form.subjectPlaceholder}
                     aria-invalid={!!fieldErrors.subject && touchedFields.subject}
                     aria-describedby={fieldErrors.subject ? "subject-error" : undefined}
                   />
@@ -305,15 +302,15 @@ const Contact = () => {
                   <div className="flex justify-between items-center mb-2">
                     <label
                       htmlFor="message"
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >
-                      Message *
+                      {t.contact.form.message} {t.contact.form.required}
                     </label>
                     <span
                       className={`text-xs ${
                         formData.message.length > 1000
-                          ? "text-red-600"
-                          : "text-gray-500"
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-gray-500 dark:text-gray-400"
                       }`}
                     >
                       {formData.message.length}/1000
@@ -328,12 +325,12 @@ const Contact = () => {
                     required
                     rows={6}
                     maxLength={1000}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none ${
+                    className={`w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none ${
                       fieldErrors.message && touchedFields.message
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "border-red-500 dark:border-red-400"
+                        : "border-gray-300 dark:border-gray-600"
                     }`}
-                    placeholder="Write message here"
+                    placeholder={t.contact.form.messagePlaceholder}
                     aria-invalid={!!fieldErrors.message && touchedFields.message}
                     aria-describedby={fieldErrors.message ? "message-error" : undefined}
                   ></textarea>
@@ -352,12 +349,12 @@ const Contact = () => {
                   {isLoading ? (
                     <>
                       <Loader2 size={20} className="animate-spin" />
-                      Sending...
+                      {t.contact.form.sending}
                     </>
                   ) : (
                     <>
                       <Send size={20} />
-                      Send Message
+                      {t.contact.form.send}
                     </>
                   )}
                 </button>
@@ -365,23 +362,22 @@ const Contact = () => {
             ) : (
               <div className="flex items-center justify-center min-h-[400px]">
                 <div className="text-center py-8">
-                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    Message Sent Successfully!
+                  <CheckCircle className="w-16 h-16 text-green-500 dark:text-green-400 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    {t.contact.success.title}
                   </h3>
-                  <p className="text-gray-600 mb-4">
-                    Thank you for reaching out. I'll get back to you as soon as
-                    possible.
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    {t.contact.success.message}
                   </p>
-                  <p className="text-sm text-gray-500 mb-6">
-                    You should also receive a confirmation email shortly.
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    {t.contact.success.confirmation}
                   </p>
                   <button
                     onClick={() => setIsSubmitted(false)}
                     className="btn-primary inline-flex items-center justify-center gap-2"
                   >
                     <Send size={20} />
-                    Send Another Message
+                    {t.contact.success.sendAnother}
                   </button>
                 </div>
               </div>
